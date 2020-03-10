@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, render_template, request, jsonify, url_for, redirect, Response
+from flask import Flask, render_template, request, jsonify, url_for, safe_join, redirect, Response
 from flask_wtf.csrf import CSRFProtect
 from .utils import define_function_jinja
 
@@ -126,6 +126,21 @@ def create_app(test_config=None):
         resp.status_code = 200
         return resp
 
+    @app.route('/centroids', methods=["get"])
+    def fetch_centroids():
+
+        state = request.args.get("state")
+        cluster_type = request.args.get("cluster_type")
+        if "og" in cluster_type:
+            fname = "nesp2_state_offgrid_clusters_centroids_{}.geojson".format(state)
+        else:
+            fname = "nesp2_state_all_clusters_centroids_{}.geojson".format(state)
+        with open(safe_join("app/static/data/centroids/", fname), "r") as ifs:
+            resp = json.load(ifs)
+        resp = jsonify(resp)
+        resp.status_code = 200
+        return resp
+
     @app.route('/random-cluster', methods=["POST"])
     def random_clusters():
 
@@ -141,6 +156,7 @@ def create_app(test_config=None):
         resp = jsonify(feature)
         resp.status_code = 200
         return resp
+
 
     @app.route('/filtered-cluster', methods=["POST"])
     def filtered_clusters():

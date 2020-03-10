@@ -884,31 +884,33 @@ function update_centroids_data(handleData){
   if (selectedState == "init"){
     centroids_file_key = "Kano";
   }
-  if (document.getElementById("clustersCheckbox").checked == false){
-    $.ajax({
-      url: "/static/data/centroids/nesp2_state_offgrid_clusters_centroids_" + title_to_snake(centroids_file_key) + ".geojson",
+  if (document.getElementById("ogClustersCheckbox").checked == true){
+    $.get({
+      url: "/centroids",
       dataType: "json",
+      data:{"cluster_type": "og", "state": title_to_snake(centroids_file_key) },
       success: function(data) {
         // handleData allows this function to be called in another function
         handleData(data);
       },
       error: function (xhr) {
         console.log(xhr.statusText);
-        console.log("loading of geojson failed");
+        console.log("loading of geojson failed in " + centroids_file_key);
       }
     })
   }
-  else if (document.getElementById("clustersCheckbox").checked == true){
-    $.ajax({
-      url: "/static/data/centroids/nesp2_state_all_clusters_centroids_" + title_to_snake(centroids_file_key) + ".geojson",
+  if (document.getElementById("clustersCheckbox").checked == true){
+    $.get({
+      url: "/centroids",
       dataType: "json",
+      data:{"cluster_type": "all", "state": title_to_snake(centroids_file_key) },
       success: function(data) {
         // handleData allows this function to be called in another function
         handleData(data);
       },
       error: function (xhr) {
         console.log(xhr.statusText);
-        console.log("loading of geojson failed");
+        console.log("loading of geojson failed in " + centroids_file_key);
       }
     })
   }
