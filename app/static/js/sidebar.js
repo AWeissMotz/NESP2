@@ -918,24 +918,16 @@ function update_centroids_data(handleData){
 
 // Function takes the data from update_centroids_data. Due to the asynchronous call they cannot simply be stored in a variable
 function update_centroids(){
-  update_centroids_data(function(output){
-    centroids = output;
+  console.log("in update centroids")
+  update_centroids_data(function(centroids){
+    //centroids = output;
     // Creates a geojson-layer with the data
-    var centroids_layer = L.geoJSON(centroids, {
-    pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, {
-            interactive: false,
-            radius: 0,
-            weight: 5,
-            opacity: 0,
-            fillOpacity: 0,
-        });
-    }
-  });
-  // add geojson-layer to a group
-  centroids_layer.addTo(centroidsGroup);
-  // store the _leaflet_id of the centroids layer in a variable. The layer can be called with this id.
-  centroids_layer_id = centroids_layer._leaflet_id;
+    centroids_layer.clearLayers()
+    centroids_layer.addData(centroids)
+
+    // store the _leaflet_id of the centroids layer in a variable. The layer can be called with this id.
+    centroids_layer_id = centroids_layer._leaflet_id;
+    console.log("centroid_layer_id " +  centroids_layer_id)
   });
 }
 

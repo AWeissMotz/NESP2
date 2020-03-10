@@ -48,6 +48,21 @@ var welcome_view = L.tileLayer("https://tile.rl-institut.de/data/nesp2_national_
 
 var centroidsGroup = L.layerGroup().addTo(map);
 
+var centroids_layer = L.geoJSON(null, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, {
+            interactive: false,
+            radius: 0,
+            weight: 5,
+            opacity: 0,
+            fillOpacity: 0,
+        });
+    }
+});
+// add geojson-layer to a group
+centroids_layer.addTo(centroidsGroup);
+
+
 function remove_layer(layer) {
   if (map.hasLayer(layer) == true) {
     map.removeLayer(layer);
