@@ -891,7 +891,7 @@ function update_centroids_data(handleData){
       data:{"cluster_type": "og", "state": title_to_snake(centroids_file_key) },
       success: function(data) {
         // handleData allows this function to be called in another function
-        handleData(data);
+        handleData(data, centroids_file_key);
       },
       error: function (xhr) {
         console.log(xhr.statusText);
@@ -906,7 +906,7 @@ function update_centroids_data(handleData){
       data:{"cluster_type": "all", "state": title_to_snake(centroids_file_key) },
       success: function(data) {
         // handleData allows this function to be called in another function
-        handleData(data);
+        handleData(data, centroids_file_key);
       },
       error: function (xhr) {
         console.log(xhr.statusText);
@@ -918,17 +918,33 @@ function update_centroids_data(handleData){
 
 // Function takes the data from update_centroids_data. Due to the asynchronous call they cannot simply be stored in a variable
 function update_centroids(){
-  console.log("in update centroids")
-  update_centroids_data(function(centroids){
-    //centroids = output;
-    // Creates a geojson-layer with the data
-    centroids_layer.clearLayers()
-    centroids_layer.addData(centroids)
-
-    // store the _leaflet_id of the centroids layer in a variable. The layer can be called with this id.
-    centroids_layer_id = centroids_layer._leaflet_id;
-    console.log("centroid_layer_id " +  centroids_layer_id)
-  });
+  // only fetch the data if it does not exist yet
+  if (centroids_layer_ids[selectedState] === undefined){
+      update_centroids_data(function(centroids, centroids_file_key){
+        // Creates a geojson-layer with the data
+            var centroids_layer = L.geoJSON(null, {
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        interactive: false,
+                        radius: 0,
+                        weight: 5,
+                        opacity: 0,
+                        fillOpacity: 0,
+                    });
+                }
+            });
+            // add geojson-layer to a group
+            centroidsGroup.addLayer(centroids_layer);
+            // store the _leaflet_id of the centroids layer in a variable. The layer can be called with this id.
+            centroids_layer_id = centroidsGroup.getLayerId(centroids_layer)
+            // TODO duplicate this for all_clusters as well
+            // store this id in a dict with state name as keys
+            centroids_layer_ids[centroids_file_key] = centroids_layer_id
+    });
+  }
+  else{
+    centroids_layer_id = centroids_layer_ids[selectedState]
+  }
 }
 
 // initial call of this function upon map start is necessary
@@ -938,7 +954,7 @@ update_centroids();
 function update_centroids_group(){
   //TODO remove old layers to avoid very large cache. need to check if layer exists, else map becomes unresponsive.
   if (centroids_layer_id in centroidsGroup._layers){
-    centroidsGroup.removeLayer(centroids_layer_id);
+    //centroidsGroup.removeLayer(centroids_layer_id);
   }
   else {
   console.log("Not removing absent Layer");
