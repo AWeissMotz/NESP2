@@ -135,10 +135,14 @@ def create_app(test_config=None):
             fname = "nesp2_state_offgrid_clusters_centroids_{}.geojson".format(state)
         else:
             fname = "nesp2_state_all_clusters_centroids_{}.geojson".format(state)
-        with open(safe_join("app/static/data/centroids/", fname), "r") as ifs:
-            resp = json.load(ifs)
-        resp = jsonify(resp)
-        resp.status_code = 200
+        try:
+            with open(safe_join("app/static/data/centroids/", fname), "r") as ifs:
+                resp = json.load(ifs)
+            resp = jsonify(resp)
+            resp.status_code = 200
+        except FileNotFoundError:
+            resp = jsonify("")
+            resp.status_code = 404
         return resp
 
     @app.route('/random-cluster', methods=["POST"])
