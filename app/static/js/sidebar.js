@@ -480,6 +480,7 @@ function adapt_view_to_village_level(previous_level, trigger) {
         hasCluster = OGClusterLayers[selectedState];
       };
       // Update the states menu list
+      selectedState = "Kano";
       document.getElementById("stateSelect").value = selectedState;
   };
   if ((previous_level == "national" || previous_level == "state") && trigger == "button"){
