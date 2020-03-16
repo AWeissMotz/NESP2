@@ -1,5 +1,6 @@
 import os
 import json
+import pandas as pd
 from flask import Flask, render_template, request, jsonify, url_for, safe_join, redirect, Response
 from flask_wtf.csrf import CSRFProtect
 from .utils import define_function_jinja
@@ -144,6 +145,54 @@ def create_app(test_config=None):
             resp = jsonify("")
             resp.status_code = 404
         return resp
+
+    @app.route('/import-csv', methods=["GET", "POST"])
+    def import_csv():
+
+        state = request.args.get("state")
+        cluster_type = request.args.get("cluster_type")
+        print(request.args)
+        fname = state
+
+        if "og" in cluster_type:
+            fname = "test_{}.csv".format(state)
+            COLS = ('cluster_offgrid_id', 'area_km2', 'building_count',
+                    'percentage_building_area', 'bEast', 'bNorth', 'bSouth',
+                    'bWest', 'lat', 'lng')  # 'grid_dist_km'
+
+        else:
+            fname = "cluster_{}.csv".format(state)
+            COLS = ('cluster_all_id', 'area_km2', 'fid', 'bEast', 'bNorth', 'bSouth', 'bWest',
+                    'lat', 'lng')  # 'grid_dist_km'
+        # try:
+        df = pd.read_csv(safe_join("app/static/data/centroids/", fname))
+
+        li = []
+        for c in COLS:
+            li = li + df[c].to_list()
+
+        d = {'adm1_pcode': df['adm1_pcode'].unique()[0], "values": li, "columns": COLS,
+             "length": len(df.index)}
+        resp = jsonify(d)
+        resp.status_code = 200
+        # except FileNotFoundError:
+        #     resp = jsonify("")
+        #     resp.status_code = 404
+        print(resp)
+        return resp
+
+        # csv = list()
+        # csv.append(", ".join(keys))
+        # for line in records:
+        #     csv.append(", ".join([str(line[k]) for k in keys]))
+        # csv = "\n".join(csv) + "\n"
+        #     csv = "1,2,3\n4,5,6\n"
+        # return Response(
+        #     csv,
+        #     mimetype="text/csv",
+        #     headers={"Content-disposition": "attachment; filename={}.csv".format(fname)}
+        # )
+
 
     @app.route('/random-cluster', methods=["POST"])
     def random_clusters():

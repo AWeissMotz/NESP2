@@ -137,6 +137,49 @@ $.post({
     success: function(data){statesWithOgClusters=data.states_with_og_clusters;},
 })
 
+function import_csv_fun(){
+    console.log(selectedState)
+    var state_code = "ng020"
+    $.get({
+        url: "/import-csv",
+        dataType: "json",
+        data: {"cluster_type": "og", "state": state_code},
+        success: function(data){
+        console.log(data)
+       // COLS = ('cluster_all_id','area_km2', 'fid', 'bEast', 'bNorth', 'bSouth', 'bWest',
+       //              'lat', 'lng') #'grid_dist_km'
+
+    //{ "type": "Point", "coordinates": [ 8.731682250794735, 12.647333703420093 ] }
+    //  d = {'adm1_pcode': df['adm1_pcode'].unique()[0], "values": li, "columns": COLS,"length": len(df.index)}
+        geojson_features = []
+        var N = data.length;
+        for (j = 0; j < N; j++) {
+            geojson_features[j] = {
+                "type": "Feature", "properties": {
+                    "adm1_pcode": data.adm1_pcode,
+                    "cluster_all_id": data.values[j],
+                    "area_km2": data.values[N + j],
+                    "fid": data.values[2 * N + j],
+                    "bb_east": data.values[3 * N + j],
+                    "bb_north": data.values[4 * N + j],
+                    "bb_south": data.values[5 * N + j],
+                    "bb_west": data.values[6 * N + j],
+                },
+                "geometry": { "type": "Point", "coordinates": [ data.values[7 * N + j], data.values[8 * N + j] ] },
+            }
+        }
+
+        geojson_features = {
+        "type": "FeatureCollection",
+        "name": "adm1_pcode_" + state_code,
+        "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+        "features": geojson_features}
+
+          console.log(geojson_features)
+        }
+    });
+}
+
 function give_status(context=null) {
     console.log("Status on");
     if (context) {
