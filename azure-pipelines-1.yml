@@ -86,4 +86,7 @@ stages:
               appName: $(webAppName)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
+          - script: |
               startUpCommand: 'python3 index.py'
+            workingDirectory: $(projectRoot)
+            displayName: "Start app"
