@@ -84,4 +84,13 @@ stages:
               azureSubscription: $(azureServiceConnectionId)
               appName: se4allwebmap
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              startUpCommand: 'python3 index.py'
+
+          - script: |
+              mkdir $(venv)
+              $(buildPython.pythonLocation)\python -m virtualenv $(venv)
+            displayName: setup virtual environment
+
+          - script: |
+                call $(venv)\python index.py
+            displayName: setup virtual environment
+              
