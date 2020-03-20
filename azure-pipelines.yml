@@ -84,9 +84,4 @@ stages:
               azureSubscription: $(azureServiceConnectionId)
               appName: se4allwebmap
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: '#python3 index.py'
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              startUpCommand: 'python3 index.py'
