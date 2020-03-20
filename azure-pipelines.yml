@@ -79,10 +79,10 @@ stages:
             displayName: 'Use Python version'
 
           - task: AzureWebApp@1
-            displayName: 'Deploy Azure Web App : $(se4allwebmap)'
+            displayName: 'Deploy Azure Web App : se4allwebmap'
             inputs:
               azureSubscription: $(azureServiceConnectionId)
-              appName: $(se4allwebmap)
+              appName: se4allwebmap
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
           - task: PythonScript@0
