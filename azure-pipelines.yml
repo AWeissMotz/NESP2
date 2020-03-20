@@ -84,15 +84,4 @@ stages:
               azureSubscription: $(azureServiceConnectionId)
               appName: se4allwebmap
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-
-          - script: |
-              call pip install virtualenv
-              call cd wwwroot
-              call python -m virtualenv antenv
-            displayName: setup virtual environment
-
-          - script: |
-                call pip install -r app/requirements.txt
-                call wwwroot\antenv\python index.py
-            displayName: setup virtual environment
-              
+              startUpCommand: call 'python index.py'
