@@ -86,11 +86,11 @@ stages:
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
           - script: |
-              mkdir $(venv)
-              $(buildPython.pythonLocation)\python -m virtualenv $(venv)
+              mkdir antenv
+              $(buildPython.pythonLocation)\python -m virtualenv antenv
             displayName: setup virtual environment
 
           - script: |
-                call $(venv)\python index.py
+                call antenv\python index.py
             displayName: setup virtual environment
               
