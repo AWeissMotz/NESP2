@@ -85,7 +85,8 @@ stages:
               appName: se4allwebmap
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
-          - task: PythonScript@0
+          - task: Bash@3
             inputs:
-              scriptSource: 'inline'
-              script: 'python3 index.py'
+              targetType: 'inline'
+              script: '#python3 index.py'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
