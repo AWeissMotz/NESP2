@@ -86,6 +86,7 @@ stages:
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
           - script: |
+              pip install virtualenv
               mkdir antenv
               $(buildPython.pythonLocation)\python -m virtualenv antenv
             displayName: setup virtual environment
